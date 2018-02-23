@@ -14,3 +14,6 @@ Object ids can be matched by predicates by implementing path arguments that supp
         .when(predicate(node,path)).skip() // skips the whole subtree starting with the node the predicate matches
         .when(predicate(node,path)).ignore() // skips an element but the iteration continues with its children
         .execute()
+        
+Designed by Eduard Beutel and Grebiel Ifill.
+A generic implementation can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees)
