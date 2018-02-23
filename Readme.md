@@ -6,6 +6,7 @@ This pattern allows declarative (predicate,consumer) pairs to be applied to each
 It is useful for the editing of tree objects like XML,JSON etc.
 The tree is iterated only once.
 Object ids can be matched by predicates by implementing path arguments that support regular expressions.
+In some cases implementing parent aware predicates and consumers might be necessary.
 
     TreeIterator.of(tree)
         .when(predicate(node,path)).then(consumer(node,path)) // executes consumer 
@@ -16,5 +17,4 @@ Object ids can be matched by predicates by implementing path arguments that supp
         .execute()
         
 Designed by Eduard Beutel and Grebiel Ifill.
-
-A generic implementation can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees)
+A generic implementation can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees).
