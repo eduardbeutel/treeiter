@@ -30,6 +30,23 @@ In some cases implementing parent aware predicates and consumers might be necess
     .collect(collection) // adds the node to the provided collection
     .collect(map,function(node,path)) // adds the node to the provided map by creating a key using the provided function
     .collect(map,function(node,path),function(node,path)) // adds the value created by the second function to the provided map by creating a key using the first function 
+    
+### Examples
+
+Editing a tree to remove some nodes and replace others:
+
+    TreeIterator.of(tree)
+        .when(predicate(node,path)).skip() // skip sub-trees which should remain untouched
+        .when(predicate(node,path)).remove() // remove the matching node
+        .when(predicate(node,path)).replace(supplier(node,path)) // replace the matching node
+        .execute()
+        
+Gather nodes in (key,node) map:
+
+    TreeIterator.of(tree)
+        .always().collect(map,function(node,path),function(node,path))
+        .execute()
+
        
 Designed by Eduard Beutel and Grebiel Ifill.
 A generic implementation can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees).
