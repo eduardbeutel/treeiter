@@ -2,9 +2,9 @@
 
 ## Tree Iterator
 
-This pattern allows declarative (predicate,operation) pairs to be applied to each tree node.
+A pattern that allows declarative (predicate,operation) pairs to be applied to each tree node.
 It is useful for the editing of tree objects like XML, JSON etc.
-The tree is considered mutable and iterated only once.
+The tree is iterated only once.
 Object ids can be matched by predicates by implementing path arguments that support regular expressions.
 In some cases implementing parent aware predicates and consumers might be necessary.
     
