@@ -41,7 +41,7 @@ Editing a tree to remove some nodes and replace others:
         .when(predicate(node,path)).replace(supplier(node,path)) // replace the matching node
         .execute()
         
-Gather nodes in (key,node) map:
+Gather all nodes in a map:
 
     TreeIterator.of(tree)
         .always().collect(map,function(node,path),function(node,path))
