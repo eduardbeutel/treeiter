@@ -3,9 +3,9 @@
 A collection of design, architecture and process patterns.
 
 A. Design:
-    - A.1 Tree Iterator
+- A.1 Tree Iterator
 B. Architecture:
-    - B.1 CRUD REST API
+- B.1 CRUD REST API
 Process:
 
 ## A. Design Patterns
