@@ -1,6 +1,16 @@
 # Patterns
 
-## Tree Iterator
+A collection of design, architecture and process patterns.
+
+A. Design:
+    - A.1 Tree Iterator
+B. Architecture:
+    - B.1 CRUD REST API
+Process:
+
+## A. Design Patterns
+
+### A.1 Tree Iterator
 
 A pattern that allows declarative (predicate,operation) pairs to be applied to each tree node.
 It is useful for the editing of tree objects like XML, JSON etc.
@@ -8,30 +18,31 @@ The tree is iterated only once.
 Object ids can be matched by predicates by implementing path arguments that support regular expressions.
 In some cases implementing parent aware predicates and consumers might be necessary.
     
-### Pattern:
+Pattern:
 
     TreeIterator.of(tree)
         .predicate().operation()
         ...
         .execute()
         
-### Predicates:
+Predicates:
 
     .when(predicate(node,path))
     .always()
     
-### Operations:
+Operations:
 
     .then(consumer(node,path)) // executes consumer 
     .remove() // removes node 
     .replace(supplier(node,path)) // replaces the node
     .skip() // skips the whole subtree starting with the node the predicate matches
     .ignore() // skips a node but the iteration continues with its children
+    .collect(reference) // changes the reference to point to the node
     .collect(collection) // adds the node to the provided collection
     .collect(map,function(node,path)) // adds the node to the provided map by creating a key using the provided function
     .collect(map,function(node,path),function(node,path)) // adds the value created by the second function to the provided map by creating a key using the first function 
     
-### Examples
+Examples:
 
 Editing a tree to remove some nodes and replace others:
 
@@ -51,7 +62,9 @@ Gather all nodes in a map:
 Designed by Eduard Beutel and Grebiel Ifill.
 A generic implementation can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees).
 
-## CRUD REST API
+## B Architecture Patterns
+
+### B.1 CRUD REST API
 
     Create:
         POST /entity
