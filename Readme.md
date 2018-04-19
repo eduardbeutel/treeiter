@@ -50,3 +50,19 @@ Gather all nodes in a map:
        
 Designed by Eduard Beutel and Grebiel Ifill.
 A generic implementation can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees).
+
+## CRUD REST API
+
+    Create:
+        POST /entity
+    Retrieve
+        byId: GET /entity/id
+        bySimpleQuery: GET /entity?filter1=value1&filter2=value2&sortByAsc=filter1&page=1&pageSize=10&view=summary
+        byComplexQuery: POST /entity/query
+    Update:
+        PUT /entity/id
+    Delete
+        byId: DELETE /entity/id
+        
+SimpleQuery supports filtering by several values using AND logic, views / projections, pagination and sorting.
+ComplexQuery doesn't have any limitations, it can be freely designed because it is provided in the body of the request.
