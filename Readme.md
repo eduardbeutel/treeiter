@@ -22,27 +22,42 @@ In some cases implementing parent aware predicates and consumers might be necess
     
 Pattern:
 
-    TreeIterator.of(tree)
+    TreeIterator.of(tree).declarative()
         .predicate().operation()
-        ...
-        .execute()
+        .predicate().operation().operation()
+        .execute();
         
+Step:
+
+The argument of the predicates and operations is the iteration step.
+The step contains a tree node and all information about it.
+
+    Step:
+        node
+        id
+        path
+        level
+        indexOnLevel
+        parent
+        ancestors
+        descendants
+        isLeaf
+
 Predicates:
 
-    .when(predicate(node,path))
-    .always()
+    .when(predicate(step))
+    .otherwise() 
     
 Operations:
 
-    .then(consumer(node,path)) // executes consumer 
+    .then(consumer(step)) // executes consumer 
     .remove() // removes node 
-    .replace(supplier(node,path)) // replaces the node
+    .replace(supplier(step)) // replaces the node
     .skip() // skips the whole subtree starting with the node the predicate matches
     .ignore() // skips a node but the iteration continues with its children
-    .collect(reference) // changes the reference to point to the node
-    .collect(collection) // adds the node to the provided collection
-    .collect(map,function(node,path)) // adds the node to the provided map by creating a key using the provided function
-    .collect(map,function(node,path),function(node,path)) // adds the value created by the second function to the provided map by creating a key using the first function 
+    .stop() 
+    .collect(reference) // changes the reference to point to the step
+    .collect(collection) // adds the step to the provided collection
     
 Examples:
 
