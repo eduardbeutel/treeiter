@@ -1,98 +1,94 @@
-# Patterns
+# Tree Iterator
 
-A collection of design, architecture and process patterns.
+A pattern for declarative tree iterators that allow (predicate,operation) pairs to be applied to each tree node.
+It is useful for the editing of tree objects like XML or JSON and extracting information like all nodes that match a condition.
+The tree must be iterated only once. This pattern is not language specific.
 
-A. Design Patterns:
-- A.1 Tree Iterator
+### Language
 
-B. Architecture Patterns:
-- B.1 CRUD REST API
+The language used in this document is based on the  [Java Functional Interfaces](https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html)
 
-C. Process Patterns:
-
-## A. Design Patterns
-
-### A.1 Tree Iterator
-
-A pattern that allows declarative (predicate,operation) pairs to be applied to each tree node.
-It is useful for the editing of tree objects like XML, JSON etc.
-The tree is iterated only once.
-Object ids can be matched by predicates by implementing path arguments that support regular expressions.
-In some cases implementing parent aware predicates and consumers might be necessary.
+- predicate() is a function that returns true or false
+- operation() is a function that can modify its arguments
+- consumer() is a operation without return value that can modify it's arguments
+- supplier() is a operation that returns a new object and doesn't modify it's arguments
+- collection can be a list, set or map
     
-Pattern:
+### Structure
 
-    TreeIterator.of(tree).declarative()
+    TreeIterator.of(tree)
         .predicate().operation()
-        .predicate().operation().operation()
-        .execute();
-        
-Step:
+        .predicate().operation().operation() // operations can be chained
+        .execute()
+       
+### Operations
 
-The argument of the predicates and operations is the iteration step.
-The step contains a tree node and all information about it.
-
-    Step:
-        node
-        id
-        path
-        level
-        indexOnLevel
-        parent
-        ancestors
-        descendants
-        isLeaf
-
-Predicates:
-
-    .when(predicate(step))
-    .otherwise() 
-    
-Operations:
-
-    .then(consumer(step)) // executes consumer 
+    .then(consumer()) // executes consumer 
     .remove() // removes node 
-    .replace(supplier(step)) // replaces the node
-    .skip() // skips the whole subtree starting with the node the predicate matches
+    .replace(supplier()) // replaces the node
+    .skip() // skips the whole subtree starting with the node the condition matches
     .ignore() // skips a node but the iteration continues with its children
-    .stop() 
-    .collect(reference) // changes the reference to point to the step
-    .collect(collection) // adds the step to the provided collection
+    .stop() // stop the iteration
+    .collect(reference) // sets reference to point to the node
+    .collect(collection) // adds the node to the provided collection
+
+### Predicates
+
+    .when()
+    .whenNot()
+    .always()
+    .otherwise() // will match when all previous predicates don't
     
-Examples:
+Specific predicates can be also implemented to improve readibility. Some examples:
+   
+ - exact match: whenId(), whenPath()
+ - pattern match: whenIdMatches(), whenPathMatches() 
+ - occurence index: whenFirst(), whenLast(), whenNth()
+ - node type: whenLeaf(), whenHasChildren()
+ - level: whenOnLevel()
+     
+### Arguments
 
-Editing a tree to remove some nodes and replace others:
+In the simplest form the predicates and operations will have the tree node as their argument.
+Depending on the need other information about the node (which is not provided by the node itself) might be needed.
+A list of possible arguments:
 
-    TreeIterator.of(tree)
-        .when(predicate(node,path)).skip() // skip sub-trees which should remain untouched
-        .when(predicate(node,path)).remove() // remove the matching node
-        .when(predicate(node,path)).replace(supplier(node,path)) // replace the matching node
-        .execute()
-        
-Gather all nodes in a map:
+	node, id, path, level, parent, ancestors, descendants
 
-    TreeIterator.of(tree)
-        .always().collect(map,function(node,path),function(node,path))
-        .execute()
+If more then three arguments are needed they can be encapsulated in a **step** (as in iteration step) object.
+The step will then be used as the argument of the predicates and operations.
 
+Several argument combinations can be implemented to improve readiblity.
+For example: 
+
+	.when(node)
+	.when(node,path)
+	.when(node,id,path)
+
+### Shortcuts:
+
+	TreeIterator.of(tree).direct().shortcut()
+	
+The pattern allows the definition of shortcuts within the scope of direct().
+Shortcuts are executed immediatly.
+
+### Design
+
+#### Goals
+
+**Simple structure**: follow a simple structure and allow flexibility through combinations.
+**Completeness**: provide all possibly necessary predicates and operations to maximize the usefulness of the iterator.
+**Don't overlap** with existing concepts. 
+
+#### Consequences
+
+Functionality to iterate and transform collections is omitted because it would overlap with existing concepts like Java Streams or C# LINQ.
+
+### Credits
        
 Designed by Eduard Beutel and Grebiel Ifill.
-A generic implementation can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees).
+Another form of this pattern can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees).
 
-## B Architecture Patterns
 
-### B.1 CRUD REST API
 
-    Create:
-        POST /entity
-    Retrieve
-        byId: GET /entity/id
-        bySimpleQuery: GET /entity?filter1=value1&filter2=value2&sortByAsc=filter1&page=1&pageSize=10&view=summary
-        byComplexQuery: POST /entity/query
-    Update:
-        PUT /entity/id
-    Delete
-        byId: DELETE /entity/id
-        
-SimpleQuery supports filtering by several values using AND logic, views / projections, pagination and sorting.
-ComplexQuery doesn't have any limitations, it can be freely designed because it is provided in the body of the request.
+
