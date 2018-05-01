@@ -10,8 +10,8 @@ The language used in this document is based on the  [Java Functional Interfaces]
 
 - predicate() is a function that returns true or false
 - operation() is a function that can modify its arguments
-- consumer() is a operation without return value that can modify it's arguments
-- supplier() is a operation that returns a new object and doesn't modify it's arguments
+- consumer() is a function without return value that can modify it's arguments
+- supplier() is a function that returns a new object and doesn't modify it's arguments
 - collection can be a list, set or map
     
 ### Structure
@@ -70,7 +70,7 @@ For example:
 	TreeIterator.of(tree).direct().shortcut()
 	
 The pattern allows the definition of shortcuts within the scope of direct().
-Shortcuts are executed immediatly.
+Shortcuts are executed immediately.
 
 ### Design
 
