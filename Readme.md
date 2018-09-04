@@ -62,7 +62,9 @@ For example:
 ### Design Goals
 
 **Simple structure**: follow a simple structure and allow flexibility through combinations.
+
 **Completeness**: provide all possibly necessary predicates and operations to maximize the usefulness of the iterator.
+
 **Don't overlap** with existing concepts like Java Streams or C# LINQ.
 
 ### Terminology
