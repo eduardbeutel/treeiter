@@ -13,7 +13,7 @@ TODO
     TreeIterator.of(tree)
         .predicate().operation()
         .predicate().operation()
-	...
+        ...
         .execute()
 		
 ### Predicates
