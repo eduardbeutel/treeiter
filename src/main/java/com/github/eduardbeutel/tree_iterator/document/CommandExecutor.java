@@ -27,21 +27,29 @@ public class CommandExecutor<Node>
         String id = (String) args[1];
         String path = (String) args[2];
 
+        boolean result = false;
         switch (command.getPredicateType())
         {
-            default:
-                return false;
             case NODE:
-                return ((Predicate<Node>) command.getPredicate()).test(node);
+                result = ((Predicate<Node>) command.getPredicate()).test(node);
+                break;
             case ID:
-                return equals((String) command.getPredicate(), id);
+                result = equals((String) command.getPredicate(), id);
+                break;
             case PATH:
-                return equals((String) command.getPredicate(), path);
+                result = equals((String) command.getPredicate(), path);
+                break;
             case ID_PATTERN:
-                return matches((Pattern) command.getPredicate(), id);
+                result = matches((Pattern) command.getPredicate(), id);
+                break;
             case PATH_PATTERN:
-                return matches((Pattern) command.getPredicate(), path);
+                result = matches((Pattern) command.getPredicate(), path);
+                break;
+            case ROOT:
+                result = isRoot(id, path);
+                break;
         }
+        return result;
     }
 
     private void executeOperation(Command<Node> command, Object... args)
@@ -49,12 +57,15 @@ public class CommandExecutor<Node>
         Node node = (Node) args[0];
         switch (command.getOperationsType())
         {
-            default:
-                break;
             case NODE_CONSUMER:
                 ((Consumer<Node>) command.getOperation()).accept(node);
                 break;
         }
+    }
+
+    private boolean isRoot(String id, String path)
+    {
+        return ("/" + id).equals(path);
     }
 
     private boolean matches(Pattern pattern, String path)

@@ -10,6 +10,7 @@ public class Command<Node>
         PATH, // String
         ID_PATTERN, // String
         PATH_PATTERN, // String
+        ROOT, // boolean
     }
 
     private PredicateType predicateType;

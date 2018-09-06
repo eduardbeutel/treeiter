@@ -25,9 +25,9 @@ TODO
 Specific predicates can be also implemented to improve readibility. Some examples:
    
  - exact match: whenId(), whenPath()
- - pattern match: whenIdMatches(), whenPathMatches() 
+ - pattern match: whenIdMatches(), whenPathMatches()
+ - node type: whenLeaf(), whenNotLeaf(), whenRoot()
  - occurence index: whenFirst(), whenLast(), whenNth()
- - node type: whenLeaf(), whenHasChildren()
  - level: whenOnLevel()
 
 ### Operations

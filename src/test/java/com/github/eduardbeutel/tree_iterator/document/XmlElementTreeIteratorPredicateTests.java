@@ -4,7 +4,9 @@ import com.github.eduardbeutel.tree_iterator.test.XmlUtils;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,20 +24,21 @@ public class XmlElementTreeIteratorPredicateTests
                         "    <book id=\"2\" />\n" +
                         "</library>"
         );
-        AtomicInteger firstCount = new AtomicInteger();
-        AtomicInteger secondCount = new AtomicInteger();
+        List<String> firstResult = new ArrayList<>();
+        List<String> secondResult = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .when(e -> e.hasAttribute("id")).then(e -> firstCount.incrementAndGet())
-                .when(e -> e.hasAttribute("id")).then(e -> secondCount.incrementAndGet())
+                .when(e -> e.hasAttribute("id")).then(e -> firstResult.add(e.getLocalName()))
+                .when(e -> e.hasAttribute("id")).then(e -> secondResult.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        int expectedCount = 2;
-        assertEquals(expectedCount, firstCount.get());
-        assertEquals(expectedCount, secondCount.get());
+        List<String> expectedResult = Arrays.asList("book", "book");
+        assertEquals(expectedResult, firstResult);
+        assertEquals(expectedResult, secondResult);
+
     }
 
     @Test
@@ -49,16 +52,16 @@ public class XmlElementTreeIteratorPredicateTests
                         "    <book id=\"2\" />\n" +
                         "</library>"
         );
-        AtomicInteger count = new AtomicInteger();
+        List<String> result = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .whenNot(e -> e.hasAttribute("id")).then(e -> count.incrementAndGet())
+                .whenNot(e -> e.hasAttribute("id")).then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        assertEquals(2, count.get()); // document & book
+        assertEquals(Arrays.asList("library", "book"), result);
     }
 
     @Test
@@ -72,16 +75,16 @@ public class XmlElementTreeIteratorPredicateTests
                         "    <book id=\"2\" />\n" +
                         "</library>"
         );
-        AtomicInteger count = new AtomicInteger();
+        List<String> result = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .always().then(e -> count.incrementAndGet())
+                .always().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        assertEquals(4, count.get()); // document & book
+        assertEquals(Arrays.asList("library", "book", "book", "book"), result);
     }
 
     @Test
@@ -95,16 +98,16 @@ public class XmlElementTreeIteratorPredicateTests
                         "    <book1/>\n" +
                         "</library>"
         );
-        AtomicInteger count = new AtomicInteger();
+        List<String> result = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .whenId("book1").then(e -> count.incrementAndGet())
+                .whenId("book1").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        assertEquals(2, count.get());
+        assertEquals(Arrays.asList("book1", "book1"), result);
     }
 
     @Test
@@ -118,16 +121,16 @@ public class XmlElementTreeIteratorPredicateTests
                         "    <m:book1/>\n" +
                         "</m:document>"
         );
-        AtomicInteger count = new AtomicInteger();
+        List<String> result = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .whenId("book1").then(e -> count.incrementAndGet())
+                .whenId("book1").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        assertEquals(2, count.get());
+        assertEquals(Arrays.asList("book1", "book1"), result);
     }
 
     @Test
@@ -144,16 +147,16 @@ public class XmlElementTreeIteratorPredicateTests
                         "    </book>\n" +
                         "</library>"
         );
-        AtomicInteger count = new AtomicInteger();
+        List<String> result = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .whenPath("/library/book/author").then(e -> count.incrementAndGet())
+                .whenPath("/library/book/author").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        assertEquals(3, count.get());
+        assertEquals(Arrays.asList("author", "author", "author"), result);
     }
 
     @Test
@@ -167,16 +170,16 @@ public class XmlElementTreeIteratorPredicateTests
                         "    <not-a-Book/>\n" +
                         "</library>"
         );
-        AtomicInteger count = new AtomicInteger();
+        List<String> result = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .whenIdMatches(".*book.*").then(e -> count.incrementAndGet())
+                .whenIdMatches(".*book.*").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        assertEquals(2, count.get());
+        assertEquals(Arrays.asList("my-book", "book"), result);
     }
 
     @Test
@@ -193,16 +196,87 @@ public class XmlElementTreeIteratorPredicateTests
                         "    </book>\n" +
                         "</library>"
         );
-        AtomicInteger count = new AtomicInteger();
+        List<String> result = new ArrayList<>();
 
         // when
         XmlElementTreeIterator.of(document)
-                .whenPathMatches("/.*/author").then(e -> count.incrementAndGet())
+                .whenPathMatches("/.*/author").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
 
         // then
-        assertEquals(3, count.get());
+        assertEquals(Arrays.asList("author", "author", "author"), result);
+    }
+
+    @Test
+    public void whenRoot()
+    {
+        // given
+        Document document = XmlUtils.createDocument(
+                "<library>\n" +
+                        "    <book>\n" +
+                        "        <title />\n" +
+                        "    </book>\n" +
+                        "</library>"
+        );
+        List<String> result = new ArrayList<>();
+
+        // when
+        XmlElementTreeIterator.of(document)
+                .whenRoot().then(e -> result.add(e.getLocalName()))
+                .execute()
+        ;
+
+        // then
+        assertEquals(Arrays.asList("library"), result);
+    }
+
+    @Test
+    public void whenLeaf()
+    {
+        // given
+        Document document = XmlUtils.createDocument(
+                "<library>\n" +
+                        "    <book>\n" +
+                        "        <title />\n" +
+                        "        <author />\n" +
+                        "    </book>\n" +
+                        "</library>"
+        );
+        List<String> result = new ArrayList<>();
+
+        // when
+        XmlElementTreeIterator.of(document)
+                .whenLeaf().then(e -> result.add(e.getLocalName()))
+                .execute()
+        ;
+
+        // then
+        assertEquals(Arrays.asList("title", "author"), result);
+    }
+
+    @Test
+    public void whenNotLeaf()
+    {
+        // given
+        Document document = XmlUtils.createDocument(
+                "<library>\n" +
+                        "    <book>\n" +
+                        "        <title />\n" +
+                        "        <author />\n" +
+                        "    </book>\n" +
+                        "</library>"
+        );
+        List<String> result = new ArrayList<>();
+
+        // when
+        XmlElementTreeIterator.of(document)
+                .whenNotLeaf().then(e -> result.add(e.getLocalName()))
+                .execute()
+        ;
+
+        // then
+        assertEquals(Arrays.asList("library", "book"), result);
     }
 
 

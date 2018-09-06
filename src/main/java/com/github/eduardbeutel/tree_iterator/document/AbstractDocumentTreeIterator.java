@@ -71,6 +71,21 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
             return iterator.addPredicate(PredicateType.PATH_PATTERN, Pattern.compile(pattern)).getOperations();
         }
 
+        public Operations<Node> whenLeaf()
+        {
+            return when(iterator::isLeaf);
+        }
+
+        public Operations<Node> whenNotLeaf()
+        {
+            return when(((Predicate<Node>) iterator::isLeaf).negate());
+        }
+
+        public Operations<Node> whenRoot()
+        {
+            return iterator.addPredicate(PredicateType.ROOT, null).getOperations();
+        }
+
     }
 
     public static class Operations<Node>
@@ -85,13 +100,14 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
 
         public Predicates<Node> then(Consumer<Node> consumer)
         {
-            iterator.addOperation(OperationType.NODE_CONSUMER, consumer);
-            return iterator.getPredicates();
+            return iterator.addOperation(OperationType.NODE_CONSUMER, consumer).getPredicates();
         }
 
     }
 
     protected abstract void iterate(Object object);
+
+    protected abstract boolean isLeaf(Node node);
 
     protected AbstractDocumentTreeIterator(Document document)
     {

@@ -7,8 +7,6 @@ import org.w3c.dom.Node;
 public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Document, Element>
 {
 
-    public static final String EMPTY = "";
-
     private XmlElementTreeIterator(Document document)
     {
         super(document);
@@ -25,6 +23,18 @@ public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Documen
         Element rootElement = ((Document) object).getDocumentElement();
         String rootId = getId(rootElement);
         iterateElement(rootElement, rootId, "/" + rootId);
+    }
+
+    @Override
+    protected boolean isLeaf(Element element)
+    {
+        int nrChildren = element.getChildNodes().getLength();
+        for (int i = 0; i < nrChildren; i++)
+        {
+            Node childNode = element.getChildNodes().item(i);
+            if (childNode.getNodeType() == Node.ELEMENT_NODE) return false;
+        }
+        return true;
     }
 
     protected void iterateElement(Element element, String id, String path)

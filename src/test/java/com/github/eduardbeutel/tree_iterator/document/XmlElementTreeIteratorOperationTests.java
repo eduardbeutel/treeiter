@@ -43,7 +43,6 @@ public class XmlElementTreeIteratorOperationTests
                         "</library>"
         );
         XMLAssert.assertXMLEqual(expectedDocument, document);
-
     }
 
 }
