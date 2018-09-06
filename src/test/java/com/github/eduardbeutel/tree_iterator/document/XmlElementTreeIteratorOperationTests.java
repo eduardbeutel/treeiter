@@ -1,13 +1,11 @@
 package com.github.eduardbeutel.tree_iterator.document;
 
-import com.github.eduardbeutel.tree_iterator.core.XmlUtils;
+import com.github.eduardbeutel.tree_iterator.test.XmlUtils;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,11 +23,11 @@ public class XmlElementTreeIteratorOperationTests
     {
         // given
         Document document = XmlUtils.createDocument(
-                "<document>\n" +
+                "<library>\n" +
                         "    <book id=\"1\" />\n" +
                         "    <book/>\n" +
                         "    <book id=\"2\" />\n" +
-                        "</document>"
+                        "</library>"
         );
 
         // when
@@ -40,11 +38,11 @@ public class XmlElementTreeIteratorOperationTests
 
         // then
         Document expectedDocument = XmlUtils.createDocument(
-                "<document>\n" +
+                "<library>\n" +
                         "    <book id=\"1\" />\n" +
                         "    <book/>\n" +
                         "    <book id=\"2\">content</book>\n" +
-                        "</document>"
+                        "</library>"
         );
         XMLAssert.assertXMLEqual(expectedDocument, document);
 

@@ -1,7 +1,8 @@
 package com.github.eduardbeutel.tree_iterator.document;
 
-import com.github.eduardbeutel.tree_iterator.document.PredicateOperationPair.OperationType;
-import com.github.eduardbeutel.tree_iterator.document.PredicateOperationPair.PredicateType;
+import com.github.eduardbeutel.tree_iterator.document.Command.OperationType;
+import com.github.eduardbeutel.tree_iterator.document.Command.PredicateType;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +12,14 @@ import java.util.function.Predicate;
 public abstract class AbstractDocumentTreeIterator<Document, Node>
 {
 
+    public final Predicate<Node> ALWAYS_PREDICATE = node -> true;
+
     private Predicates<Node> predicates = new Predicates<>(this);
     private Operations<Node> operations = new Operations<>(this);
     private Document document;
-    private List<PredicateOperationPair<Node>> allPairs = new ArrayList<>();
-    private PredicateOperationPair<Node> currentPair;
-    private PredicateOperationPairExecutor<Node> executor = new PredicateOperationPairExecutor<>();
+    private List<Command<Node>> commands = new ArrayList<>();
+    private Command<Node> currentCommand;
+    private CommandExecutor<Node> executor = new CommandExecutor<>();
 
     public static class Predicates<Node>
     {
@@ -35,8 +38,27 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
 
         public Operations<Node> when(Predicate<Node> predicate)
         {
-            iterator.addPredicate(PredicateType.WHEN_NODE,predicate);
-            return iterator.getOperations();
+            return iterator.addPredicate(PredicateType.NODE,predicate).getOperations();
+        }
+
+        public Operations<Node> whenNot(Predicate<Node> predicate)
+        {
+            return iterator.addPredicate(PredicateType.NODE,predicate.negate()).getOperations();
+        }
+
+        public Operations<Node> always()
+        {
+            return iterator.addPredicate(PredicateType.NODE,iterator.ALWAYS_PREDICATE).getOperations();
+        }
+
+        public Operations<Node> whenId(String id)
+        {
+            return iterator.addPredicate(PredicateType.ID,id).getOperations();
+        }
+
+        public Operations<Node> whenPath(String path)
+        {
+            return iterator.addPredicate(PredicateType.PATH,path).getOperations();
         }
 
     }
@@ -66,22 +88,22 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         this.document = document;
     }
 
-    protected PredicateOperationPair<Node> addPredicate(PredicateType type, Object predicate)
+    protected AbstractDocumentTreeIterator<Document,Node> addPredicate(PredicateType type, Object predicate)
     {
-        PredicateOperationPair<Node> pair = new PredicateOperationPair<>();
-        pair.setPredicateType(type);
-        pair.setPredicate(predicate);
-        this.allPairs.add(pair);
-        this.currentPair = pair;
-        return pair;
+        Command<Node> command = new Command<>();
+        command.setPredicateType(type);
+        command.setPredicate(predicate);
+        this.commands.add(command);
+        this.currentCommand = command;
+        return this;
     }
 
-    protected PredicateOperationPair<Node> addOperation(OperationType type, Object operation)
+    protected AbstractDocumentTreeIterator<Document,Node> addOperation(OperationType type, Object operation)
     {
-        PredicateOperationPair<Node> pair = this.currentPair;
-        pair.setOperationsType(type);
-        pair.setOperation(operation);
-        return pair;
+        Command<Node> command = this.currentCommand;
+        command.setOperationsType(type);
+        command.setOperation(operation);
+        return this;
     }
 
     protected Predicates<Node> getPredicates()
@@ -99,14 +121,21 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         return document;
     }
 
-    protected List<PredicateOperationPair<Node>> getAllPairs()
+    protected List<Command<Node>> getCommands()
     {
-        return allPairs;
+        return commands;
     }
 
-    protected PredicateOperationPairExecutor<Node> getExecutor()
+    protected CommandExecutor<Node> getExecutor()
     {
         return executor;
     }
 
+    protected void executeCommands(Node node, String id, String path)
+    {
+        for (Command<Node> command : getCommands())
+        {
+            getExecutor().execute(command, node, id, path);
+        }
+    }
 }

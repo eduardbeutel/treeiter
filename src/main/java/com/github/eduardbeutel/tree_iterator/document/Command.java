@@ -3,12 +3,14 @@ package com.github.eduardbeutel.tree_iterator.document;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class PredicateOperationPair<Node>
+public class Command<Node>
 {
 
     protected enum PredicateType
     {
-        WHEN_NODE // when(Predicate<Node>)
+        NODE, // Predicate<Node>
+        ID, // String
+        PATH, // String
     }
     private PredicateType predicateType;
     private Object predicate;
