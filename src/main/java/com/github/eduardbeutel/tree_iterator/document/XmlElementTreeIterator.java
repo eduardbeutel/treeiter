@@ -24,12 +24,12 @@ public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Documen
     {
         Element rootElement = ((Document) object).getDocumentElement();
         String rootId = getId(rootElement);
-        iterateElement(rootElement,rootId,"/"+rootId);
+        iterateElement(rootElement, rootId, "/" + rootId);
     }
 
-    protected void iterateElement(Element element,String id,String path)
+    protected void iterateElement(Element element, String id, String path)
     {
-        executeCommands(element,id,path);
+        executeCommands(element, id, path);
 
         int nrChildren = element.getChildNodes().getLength();
         for (int i = 0; i < nrChildren; i++)
@@ -40,14 +40,14 @@ public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Documen
 
             String childId = getId(childElement);
             String childPath = path + "/" + childId;
-            iterateElement(childElement,childId,childPath);
+            iterateElement(childElement, childId, childPath);
         }
     }
 
     protected String getId(Element element)
     {
         String id = element.getLocalName();
-        if(id == null) throw new RuntimeException("Please use DocumentBuilderFactory.setNamespaceAware(true).");
+        if (id == null) throw new RuntimeException("Please use DocumentBuilderFactory.setNamespaceAware(true).");
         return id;
     }
 

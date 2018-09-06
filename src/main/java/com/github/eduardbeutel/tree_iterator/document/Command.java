@@ -1,8 +1,5 @@
 package com.github.eduardbeutel.tree_iterator.document;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 public class Command<Node>
 {
 
@@ -11,7 +8,10 @@ public class Command<Node>
         NODE, // Predicate<Node>
         ID, // String
         PATH, // String
+        ID_PATTERN, // String
+        PATH_PATTERN, // String
     }
+
     private PredicateType predicateType;
     private Object predicate;
 
@@ -20,6 +20,7 @@ public class Command<Node>
     {
         NODE_CONSUMER // Consumer<Node>
     }
+
     private OperationType operationsType;
     private Object operation;
 

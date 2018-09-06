@@ -7,8 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import static org.junit.Assert.assertEquals;
-
 public class XmlElementTreeIteratorOperationTests
 {
 

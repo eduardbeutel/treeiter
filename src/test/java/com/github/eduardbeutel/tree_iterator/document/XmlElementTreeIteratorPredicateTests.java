@@ -156,5 +156,54 @@ public class XmlElementTreeIteratorPredicateTests
         assertEquals(3, count.get());
     }
 
+    @Test
+    public void whenIdMatches()
+    {
+        // given
+        Document document = XmlUtils.createDocument(
+                "<library>\n" +
+                        "    <my-book/>\n" +
+                        "    <book/>\n" +
+                        "    <not-a-Book/>\n" +
+                        "</library>"
+        );
+        AtomicInteger count = new AtomicInteger();
+
+        // when
+        XmlElementTreeIterator.of(document)
+                .whenIdMatches(".*book.*").then(e -> count.incrementAndGet())
+                .execute()
+        ;
+
+        // then
+        assertEquals(2, count.get());
+    }
+
+    @Test
+    public void whenPathMatches()
+    {
+        // given
+        Document document = XmlUtils.createDocument(
+                "<library>\n" +
+                        "    <book>\n" +
+                        "        <title />\n" +
+                        "        <author />\n" +
+                        "        <author />\n" +
+                        "        <author />\n" +
+                        "    </book>\n" +
+                        "</library>"
+        );
+        AtomicInteger count = new AtomicInteger();
+
+        // when
+        XmlElementTreeIterator.of(document)
+                .whenPathMatches("/.*/author").then(e -> count.incrementAndGet())
+                .execute()
+        ;
+
+        // then
+        assertEquals(3, count.get());
+    }
+
 
 }

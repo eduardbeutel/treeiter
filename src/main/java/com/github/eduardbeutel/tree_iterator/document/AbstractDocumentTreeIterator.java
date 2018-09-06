@@ -2,12 +2,12 @@ package com.github.eduardbeutel.tree_iterator.document;
 
 import com.github.eduardbeutel.tree_iterator.document.Command.OperationType;
 import com.github.eduardbeutel.tree_iterator.document.Command.PredicateType;
-import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public abstract class AbstractDocumentTreeIterator<Document, Node>
 {
@@ -38,27 +38,37 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
 
         public Operations<Node> when(Predicate<Node> predicate)
         {
-            return iterator.addPredicate(PredicateType.NODE,predicate).getOperations();
+            return iterator.addPredicate(PredicateType.NODE, predicate).getOperations();
         }
 
         public Operations<Node> whenNot(Predicate<Node> predicate)
         {
-            return iterator.addPredicate(PredicateType.NODE,predicate.negate()).getOperations();
+            return iterator.addPredicate(PredicateType.NODE, predicate.negate()).getOperations();
         }
 
         public Operations<Node> always()
         {
-            return iterator.addPredicate(PredicateType.NODE,iterator.ALWAYS_PREDICATE).getOperations();
+            return iterator.addPredicate(PredicateType.NODE, iterator.ALWAYS_PREDICATE).getOperations();
         }
 
         public Operations<Node> whenId(String id)
         {
-            return iterator.addPredicate(PredicateType.ID,id).getOperations();
+            return iterator.addPredicate(PredicateType.ID, id).getOperations();
         }
 
         public Operations<Node> whenPath(String path)
         {
-            return iterator.addPredicate(PredicateType.PATH,path).getOperations();
+            return iterator.addPredicate(PredicateType.PATH, path).getOperations();
+        }
+
+        public Operations<Node> whenIdMatches(String pattern)
+        {
+            return iterator.addPredicate(PredicateType.ID_PATTERN, Pattern.compile(pattern)).getOperations();
+        }
+
+        public Operations<Node> whenPathMatches(String pattern)
+        {
+            return iterator.addPredicate(PredicateType.PATH_PATTERN, Pattern.compile(pattern)).getOperations();
         }
 
     }
@@ -75,7 +85,7 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
 
         public Predicates<Node> then(Consumer<Node> consumer)
         {
-            iterator.addOperation(OperationType.NODE_CONSUMER,consumer);
+            iterator.addOperation(OperationType.NODE_CONSUMER, consumer);
             return iterator.getPredicates();
         }
 
@@ -88,7 +98,7 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         this.document = document;
     }
 
-    protected AbstractDocumentTreeIterator<Document,Node> addPredicate(PredicateType type, Object predicate)
+    protected AbstractDocumentTreeIterator<Document, Node> addPredicate(PredicateType type, Object predicate)
     {
         Command<Node> command = new Command<>();
         command.setPredicateType(type);
@@ -98,7 +108,7 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         return this;
     }
 
-    protected AbstractDocumentTreeIterator<Document,Node> addOperation(OperationType type, Object operation)
+    protected AbstractDocumentTreeIterator<Document, Node> addOperation(OperationType type, Object operation)
     {
         Command<Node> command = this.currentCommand;
         command.setOperationsType(type);

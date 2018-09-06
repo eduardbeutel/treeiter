@@ -2,6 +2,7 @@ package com.github.eduardbeutel.tree_iterator.document;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class CommandExecutor<Node>
 {
@@ -31,11 +32,15 @@ public class CommandExecutor<Node>
             default:
                 return false;
             case NODE:
-                return ((Predicate<Node>)command.getPredicate()).test(node);
+                return ((Predicate<Node>) command.getPredicate()).test(node);
             case ID:
-                return equals((String)command.getPredicate(), id);
+                return equals((String) command.getPredicate(), id);
             case PATH:
-                return equals((String)command.getPredicate(), path);
+                return equals((String) command.getPredicate(), path);
+            case ID_PATTERN:
+                return matches((Pattern) command.getPredicate(), id);
+            case PATH_PATTERN:
+                return matches((Pattern) command.getPredicate(), path);
         }
     }
 
@@ -47,16 +52,21 @@ public class CommandExecutor<Node>
             default:
                 break;
             case NODE_CONSUMER:
-                ((Consumer<Node>)command.getOperation()).accept(node);
+                ((Consumer<Node>) command.getOperation()).accept(node);
                 break;
         }
     }
 
+    private boolean matches(Pattern pattern, String path)
+    {
+        return pattern.matcher(path).matches();
+    }
+
     private boolean equals(String left, String right)
     {
-        if(left == null && right != null) return false;
-        if(left != null && right == null) return false;
-        if(left == null && right == null) return true;
+        if (left == null && right != null) return false;
+        if (left != null && right == null) return false;
+        if (left == null && right == null) return true;
         return left.equals(right);
     }
 
