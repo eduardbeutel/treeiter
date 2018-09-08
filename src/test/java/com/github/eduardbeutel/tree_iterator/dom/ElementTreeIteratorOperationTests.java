@@ -1,5 +1,6 @@
-package com.github.eduardbeutel.tree_iterator.document;
+package com.github.eduardbeutel.tree_iterator.dom;
 
+import com.github.eduardbeutel.tree_iterator.dom.ElementTreeIterator;
 import com.github.eduardbeutel.tree_iterator.test.XmlUtils;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -7,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-public class XmlElementTreeIteratorOperationTests
+public class ElementTreeIteratorOperationTests
 {
 
     @Before
@@ -29,7 +30,7 @@ public class XmlElementTreeIteratorOperationTests
         );
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .when(e -> "2".equals(e.getAttribute("id"))).then(e -> e.setTextContent("content"))
                 .execute()
         ;

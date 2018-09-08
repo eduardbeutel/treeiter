@@ -1,16 +1,17 @@
-package com.github.eduardbeutel.tree_iterator.document;
+package com.github.eduardbeutel.tree_iterator.dom;
 
 import com.github.eduardbeutel.tree_iterator.core.TraversalDirection;
+import com.github.eduardbeutel.tree_iterator.document.AbstractDocumentTreeIterator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Document, Element>
+public class ElementTreeIterator extends AbstractDocumentTreeIterator<Document, Element>
 {
 
     private TraversalDirection direction;
 
-    private XmlElementTreeIterator(Document document, TraversalDirection direction)
+    private ElementTreeIterator(Document document, TraversalDirection direction)
     {
         super(document);
         this.direction = direction;
@@ -18,12 +19,12 @@ public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Documen
 
     public static Conditions<Element> topDown(Document document)
     {
-        return new XmlElementTreeIterator(document, TraversalDirection.TOP_DOWN).getConditions();
+        return new ElementTreeIterator(document, TraversalDirection.TOP_DOWN).getConditions();
     }
 
     public static Conditions<Element> bottomUp(Document document)
     {
-        return new XmlElementTreeIterator(document, TraversalDirection.BOTTOM_UP).getConditions();
+        return new ElementTreeIterator(document, TraversalDirection.BOTTOM_UP).getConditions();
     }
 
     @Override

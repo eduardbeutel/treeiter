@@ -1,5 +1,6 @@
-package com.github.eduardbeutel.tree_iterator.document;
+package com.github.eduardbeutel.tree_iterator.dom;
 
+import com.github.eduardbeutel.tree_iterator.dom.ElementTreeIterator;
 import com.github.eduardbeutel.tree_iterator.test.XmlUtils;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -10,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class XmlElementTreeIteratorConditionTests
+public class ElementTreeIteratorConditionTests
 {
 
     @Test
@@ -28,7 +29,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> secondResult = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .when(e -> e.hasAttribute("id")).then(e -> firstResult.add(e.getLocalName()))
                 .when(e -> e.hasAttribute("id")).then(e -> secondResult.add(e.getLocalName()))
                 .execute()
@@ -55,7 +56,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenNot(e -> e.hasAttribute("id")).then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -78,7 +79,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .always().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -101,7 +102,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenId("book1").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -124,7 +125,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenId("book1").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -150,7 +151,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenPath("/library/book/author").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -173,7 +174,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenIdMatches(".*book.*").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -199,7 +200,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenPathMatches("/.*/author").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -222,7 +223,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenRoot().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -246,7 +247,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenLeaf().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -270,7 +271,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenNotLeaf().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -295,7 +296,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> secondResult = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .whenLeaf().and().whenIdMatches(".*aut.*").then(e -> firstResult.add(e.getLocalName()))
                 .whenId("book").and().whenNot(e -> e.hasAttribute("id")).and().whenNotLeaf().then(e -> secondResult.add(e.getLocalName()))
                 .execute()

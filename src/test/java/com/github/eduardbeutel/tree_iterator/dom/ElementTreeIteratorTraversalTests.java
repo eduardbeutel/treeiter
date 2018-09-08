@@ -1,5 +1,6 @@
-package com.github.eduardbeutel.tree_iterator.document;
+package com.github.eduardbeutel.tree_iterator.dom;
 
+import com.github.eduardbeutel.tree_iterator.dom.ElementTreeIterator;
 import com.github.eduardbeutel.tree_iterator.test.XmlUtils;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -10,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class XmlElementTreeIteratorTraversalTests
+public class ElementTreeIteratorTraversalTests
 {
 
     @Test
@@ -28,7 +29,7 @@ public class XmlElementTreeIteratorTraversalTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.topDown(document)
+        ElementTreeIterator.topDown(document)
                 .always().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -55,7 +56,7 @@ public class XmlElementTreeIteratorTraversalTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.bottomUp(document)
+        ElementTreeIterator.bottomUp(document)
                 .always().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
