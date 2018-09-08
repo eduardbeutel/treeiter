@@ -29,7 +29,7 @@ public class XmlElementTreeIteratorOperationTests
         );
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .when(e -> "2".equals(e.getAttribute("id"))).then(e -> e.setTextContent("content"))
                 .execute()
         ;

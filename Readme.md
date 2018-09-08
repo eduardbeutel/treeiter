@@ -13,7 +13,7 @@ This pattern is not language specific.
 
 ### Structure
 
-    TreeIterator.of(tree)
+    TreeIterator.topDown(tree)
         .condition().operation()
         .condition().and().condition().operation()
         ...
@@ -55,6 +55,11 @@ A list of possible arguments:
 	node, id, path, level, parent, ancestors, descendants
 
 Arguments can be encapsulated in a **IterationStep** object.
+
+### Traversal Direction
+
+    .topDown(tree)
+    .bottomUp(tree)
 
 ### Design Goals
 

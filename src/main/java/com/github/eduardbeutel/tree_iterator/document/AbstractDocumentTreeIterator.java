@@ -146,6 +146,16 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         if (lastCommand.getConditions().isEmpty()) commands.remove(lastIndex);
     }
 
+    protected void executeCommands(Node node, String id, String path)
+    {
+        for (Command command : getCommands())
+        {
+            getExecutor().execute(command, node, id, path);
+        }
+    }
+
+    //
+
     protected Conditions<Node> getConditions()
     {
         return conditions;
@@ -171,11 +181,5 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         return executor;
     }
 
-    protected void executeCommands(Node node, String id, String path)
-    {
-        for (Command command : getCommands())
-        {
-            getExecutor().execute(command, node, id, path);
-        }
-    }
+
 }

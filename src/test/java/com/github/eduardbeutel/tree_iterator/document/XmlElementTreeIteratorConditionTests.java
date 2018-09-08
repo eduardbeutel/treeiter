@@ -28,7 +28,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> secondResult = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .when(e -> e.hasAttribute("id")).then(e -> firstResult.add(e.getLocalName()))
                 .when(e -> e.hasAttribute("id")).then(e -> secondResult.add(e.getLocalName()))
                 .execute()
@@ -55,7 +55,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenNot(e -> e.hasAttribute("id")).then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -78,7 +78,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .always().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -101,7 +101,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenId("book1").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -124,7 +124,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenId("book1").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -150,7 +150,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenPath("/library/book/author").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -173,7 +173,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenIdMatches(".*book.*").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -199,7 +199,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenPathMatches("/.*/author").then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -222,7 +222,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenRoot().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -246,7 +246,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenLeaf().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -270,7 +270,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> result = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenNotLeaf().then(e -> result.add(e.getLocalName()))
                 .execute()
         ;
@@ -295,7 +295,7 @@ public class XmlElementTreeIteratorConditionTests
         List<String> secondResult = new ArrayList<>();
 
         // when
-        XmlElementTreeIterator.of(document)
+        XmlElementTreeIterator.topDown(document)
                 .whenLeaf().and().whenIdMatches(".*aut.*").then(e -> firstResult.add(e.getLocalName()))
                 .whenId("book").and().whenNot(e -> e.hasAttribute("id")).and().whenNotLeaf().then(e -> secondResult.add(e.getLocalName()))
                 .execute()

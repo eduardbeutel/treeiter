@@ -1,5 +1,6 @@
 package com.github.eduardbeutel.tree_iterator.document;
 
+import com.github.eduardbeutel.tree_iterator.core.TraversalDirection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -7,14 +8,22 @@ import org.w3c.dom.Node;
 public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Document, Element>
 {
 
-    private XmlElementTreeIterator(Document document)
+    private TraversalDirection direction;
+
+    private XmlElementTreeIterator(Document document, TraversalDirection direction)
     {
         super(document);
+        this.direction = direction;
     }
 
-    public static Conditions<Element> of(Document document)
+    public static Conditions<Element> topDown(Document document)
     {
-        return new XmlElementTreeIterator(document).getConditions();
+        return new XmlElementTreeIterator(document, TraversalDirection.TOP_DOWN).getConditions();
+    }
+
+    public static Conditions<Element> bottomUp(Document document)
+    {
+        return new XmlElementTreeIterator(document, TraversalDirection.BOTTOM_UP).getConditions();
     }
 
     @Override
@@ -39,7 +48,7 @@ public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Documen
 
     protected void iterateElement(Element element, String id, String path)
     {
-        executeCommands(element, id, path);
+        if(TraversalDirection.TOP_DOWN == direction) executeCommands(element, id, path);
 
         int nrChildren = element.getChildNodes().getLength();
         for (int i = 0; i < nrChildren; i++)
@@ -52,6 +61,8 @@ public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Documen
             String childPath = path + "/" + childId;
             iterateElement(childElement, childId, childPath);
         }
+
+        if(TraversalDirection.BOTTOM_UP == direction) executeCommands(element, id, path);
     }
 
     protected String getId(Element element)
