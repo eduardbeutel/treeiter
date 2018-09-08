@@ -1,8 +1,5 @@
 package com.github.eduardbeutel.tree_iterator.document;
 
-import com.github.eduardbeutel.tree_iterator.document.Command.OperationType;
-import com.github.eduardbeutel.tree_iterator.document.Command.PredicateType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -14,61 +11,62 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
 
     public final Predicate<Node> ALWAYS_PREDICATE = node -> true;
 
-    private Predicates<Node> predicates = new Predicates<>(this);
+    private Conditions<Node> conditions = new Conditions<>(this);
     private Operations<Node> operations = new Operations<>(this);
     private Document document;
-    private List<Command<Node>> commands = new ArrayList<>();
-    private Command<Node> currentCommand;
+    private List<Command> commands = new ArrayList<>();
+    private Command currentCommand;
     private CommandExecutor<Node> executor = new CommandExecutor<>();
 
-    public static class Predicates<Node>
+    public static class Conditions<Node>
     {
 
         private AbstractDocumentTreeIterator iterator;
 
-        private Predicates(AbstractDocumentTreeIterator iterator)
+        private Conditions(AbstractDocumentTreeIterator iterator)
         {
             this.iterator = iterator;
         }
 
         public void execute()
         {
+            iterator.clearLastCommandIfEmpty();
             iterator.iterate(iterator.getDocument());
         }
 
         public Operations<Node> when(Predicate<Node> predicate)
         {
-            return iterator.addPredicate(PredicateType.NODE, predicate).getOperations();
+            return iterator.addCondition(ConditionType.NODE, predicate).getOperations();
         }
 
         public Operations<Node> whenNot(Predicate<Node> predicate)
         {
-            return iterator.addPredicate(PredicateType.NODE, predicate.negate()).getOperations();
+            return iterator.addCondition(ConditionType.NODE, predicate.negate()).getOperations();
         }
 
         public Operations<Node> always()
         {
-            return iterator.addPredicate(PredicateType.NODE, iterator.ALWAYS_PREDICATE).getOperations();
+            return iterator.addCondition(ConditionType.NODE, iterator.ALWAYS_PREDICATE).getOperations();
         }
 
         public Operations<Node> whenId(String id)
         {
-            return iterator.addPredicate(PredicateType.ID, id).getOperations();
+            return iterator.addCondition(ConditionType.ID, id).getOperations();
         }
 
         public Operations<Node> whenPath(String path)
         {
-            return iterator.addPredicate(PredicateType.PATH, path).getOperations();
+            return iterator.addCondition(ConditionType.PATH, path).getOperations();
         }
 
         public Operations<Node> whenIdMatches(String pattern)
         {
-            return iterator.addPredicate(PredicateType.ID_PATTERN, Pattern.compile(pattern)).getOperations();
+            return iterator.addCondition(ConditionType.ID_PATTERN, Pattern.compile(pattern)).getOperations();
         }
 
         public Operations<Node> whenPathMatches(String pattern)
         {
-            return iterator.addPredicate(PredicateType.PATH_PATTERN, Pattern.compile(pattern)).getOperations();
+            return iterator.addCondition(ConditionType.PATH_PATTERN, Pattern.compile(pattern)).getOperations();
         }
 
         public Operations<Node> whenLeaf()
@@ -83,7 +81,7 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
 
         public Operations<Node> whenRoot()
         {
-            return iterator.addPredicate(PredicateType.ROOT, null).getOperations();
+            return iterator.addCondition(ConditionType.ROOT, null).getOperations();
         }
 
     }
@@ -98,9 +96,14 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
             this.iterator = iterator;
         }
 
-        public Predicates<Node> then(Consumer<Node> consumer)
+        public Conditions<Node> and()
         {
-            return iterator.addOperation(OperationType.NODE_CONSUMER, consumer).getPredicates();
+            return iterator.getConditions();
+        }
+
+        public Conditions<Node> then(Consumer<Node> consumer)
+        {
+            return iterator.addOperation(OperationType.NODE_CONSUMER, consumer).getConditions();
         }
 
     }
@@ -114,27 +117,38 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         this.document = document;
     }
 
-    protected AbstractDocumentTreeIterator<Document, Node> addPredicate(PredicateType type, Object predicate)
+    protected AbstractDocumentTreeIterator<Document, Node> addCondition(ConditionType type, Object condition)
     {
-        Command<Node> command = new Command<>();
-        command.setPredicateType(type);
-        command.setPredicate(predicate);
-        this.commands.add(command);
-        this.currentCommand = command;
+        if (currentCommand == null) newCommand();
+        currentCommand.addCondition(new Condition(type, condition));
         return this;
     }
 
     protected AbstractDocumentTreeIterator<Document, Node> addOperation(OperationType type, Object operation)
     {
-        Command<Node> command = this.currentCommand;
-        command.setOperationsType(type);
-        command.setOperation(operation);
+        currentCommand.setOperation(new Operation(type, operation));
+        newCommand();
         return this;
     }
 
-    protected Predicates<Node> getPredicates()
+    protected void newCommand()
     {
-        return predicates;
+        Command command = new Command();
+        currentCommand = command;
+        commands.add(command);
+    }
+
+    protected void clearLastCommandIfEmpty()
+    {
+        if (commands.isEmpty()) return;
+        int lastIndex = commands.size() - 1;
+        Command lastCommand = commands.get(lastIndex);
+        if (lastCommand.getConditions().isEmpty()) commands.remove(lastIndex);
+    }
+
+    protected Conditions<Node> getConditions()
+    {
+        return conditions;
     }
 
     protected Operations<Node> getOperations()
@@ -147,7 +161,7 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
         return document;
     }
 
-    protected List<Command<Node>> getCommands()
+    protected List<Command> getCommands()
     {
         return commands;
     }
@@ -159,7 +173,7 @@ public abstract class AbstractDocumentTreeIterator<Document, Node>
 
     protected void executeCommands(Node node, String id, String path)
     {
-        for (Command<Node> command : getCommands())
+        for (Command command : getCommands())
         {
             getExecutor().execute(command, node, id, path);
         }

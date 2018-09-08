@@ -12,68 +12,71 @@ public class CommandExecutor<Node>
         args[1] = Node Id as String
         args[2] = Node Path as String
    */
-    void execute(Command<Node> command, Object... args)
+    void execute(Command command, Object... args)
     {
         if (args == null || args.length == 0) return;
-        if (evaluatePredicate(command, args))
+        if (evaluateConditions(command, args))
         {
             executeOperation(command, args);
         }
     }
 
-    private boolean evaluatePredicate(Command<Node> command, Object... args)
+    protected boolean evaluateConditions(Command command, Object... args)
     {
         Node node = (Node) args[0];
         String id = (String) args[1];
         String path = (String) args[2];
 
-        boolean result = false;
-        switch (command.getPredicateType())
+        boolean result = true;
+        for (Condition condition : command.getConditions())
         {
-            case NODE:
-                result = ((Predicate<Node>) command.getPredicate()).test(node);
-                break;
-            case ID:
-                result = equals((String) command.getPredicate(), id);
-                break;
-            case PATH:
-                result = equals((String) command.getPredicate(), path);
-                break;
-            case ID_PATTERN:
-                result = matches((Pattern) command.getPredicate(), id);
-                break;
-            case PATH_PATTERN:
-                result = matches((Pattern) command.getPredicate(), path);
-                break;
-            case ROOT:
-                result = isRoot(id, path);
-                break;
+            switch (condition.getType())
+            {
+                case NODE:
+                    result &= ((Predicate<Node>) condition.getObject()).test(node);
+                    break;
+                case ID:
+                    result &= equals((String) condition.getObject(), id);
+                    break;
+                case PATH:
+                    result &= equals((String) condition.getObject(), path);
+                    break;
+                case ID_PATTERN:
+                    result &= matches((Pattern) condition.getObject(), id);
+                    break;
+                case PATH_PATTERN:
+                    result &= matches((Pattern) condition.getObject(), path);
+                    break;
+                case ROOT:
+                    result &= isRoot(id, path);
+                    break;
+            }
         }
         return result;
     }
 
-    private void executeOperation(Command<Node> command, Object... args)
+    protected void executeOperation(Command command, Object... args)
     {
         Node node = (Node) args[0];
-        switch (command.getOperationsType())
+        switch (command.getOperation().getType())
         {
             case NODE_CONSUMER:
-                ((Consumer<Node>) command.getOperation()).accept(node);
+                ((Consumer<Node>) command.getOperation().getObject()).accept(node);
                 break;
         }
     }
 
-    private boolean isRoot(String id, String path)
+    protected boolean isRoot(String id, String path)
     {
         return ("/" + id).equals(path);
     }
 
-    private boolean matches(Pattern pattern, String path)
+    protected boolean matches(Pattern pattern, String path)
     {
         return pattern.matcher(path).matches();
     }
 
-    private boolean equals(String left, String right)
+    protected boolean equals(String left, String right)
     {
         if (left == null && right != null) return false;
         if (left != null && right == null) return false;

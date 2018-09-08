@@ -12,9 +12,9 @@ public class XmlElementTreeIterator extends AbstractDocumentTreeIterator<Documen
         super(document);
     }
 
-    public static Predicates<Element> of(Document document)
+    public static Conditions<Element> of(Document document)
     {
-        return new XmlElementTreeIterator(document).getPredicates();
+        return new XmlElementTreeIterator(document).getConditions();
     }
 
     @Override

@@ -1,33 +1,36 @@
 # Tree Iterator
 
-The Tree Iterator is a pattern for declarative iterators that allow (predicate,operation) pairs to be applied to each tree node.
-It is useful for the editing of tree objects like XML or JSON and extracting information like all nodes that match a condition.
-The tree must be iterated only once. This pattern is not language specific.
+- [Pattern](#pattern)
+- [Java Implementation](#java-implementation)
 
-### Example
+## Pattern
 
-TODO
-    
+The Tree Iterator is a pattern for declarative iterators that allows commands to be applied to each tree node.
+A command consists in its simplest form of a condition and an operation.
+The pattern is useful for the manipulation of tree objects like XML or JSON and information gathering.
+The tree is iterated only once.
+This pattern is not language specific.
+
 ### Structure
 
     TreeIterator.of(tree)
-        .predicate().operation()
-        .predicate().operation()
+        .condition().operation()
+        .condition().and().condition().operation()
         ...
         .execute()
 		
-### Predicates
+### Conditions
 
     .when()
     .whenNot()
     .always()
 
-Specific predicates can be also implemented to improve readibility. Some examples:
+Specific conditions can be also implemented to improve readibility. Some examples:
    
  - exact match: whenId(), whenPath()
  - pattern match: whenIdMatches(), whenPathMatches()
  - node type: whenLeaf(), whenNotLeaf(), whenRoot()
- - occurence index: whenFirst(), whenLast(), whenNth()
+ - occurrence index: whenFirst(), whenLast(), whenNth()
  - level: whenOnLevel()
 
 ### Operations
@@ -40,38 +43,28 @@ Specific predicates can be also implemented to improve readibility. Some example
     .stop() // stop the iteration
     .collect(reference) // sets reference to point to the node
     .collect(collection) // adds the node to the provided collection
+
+The operation names are based on the [Java Functional Interfaces](https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html)
      
 ### Arguments
 
-In the simplest form the predicates and operations will have the tree node as their argument.
+In the simplest form conditions and operations will have the tree node as their argument.
 Depending on the need, other information about the node (which is not provided by the node itself) might be needed.
 A list of possible arguments:
 
 	node, id, path, level, parent, ancestors, descendants
 
-If more then three arguments are needed they can be encapsulated in a **step** (as in iteration step) object.
-The step can then be used as the argument of the predicates and operations.
-
-Several argument combinations can be implemented to improve readiblity.
-For example: 
-
-	.when(node)
-	.when(node,path)
-	.when(node,id,path)
+Arguments can be encapsulated in a **IterationStep** object.
 
 ### Design Goals
 
-**Simple structure**: follow a simple structure and allow flexibility through combinations.
+**Simple structure**: follow a simple structure for the fluent language and allow flexibility through combinations.
 
-**Completeness**: provide all possibly necessary predicates and operations to maximize the usefulness of the iterator.
-
-**Don't overlap** with existing concepts like Java Streams or C# LINQ.
-
-### Terminology
-
-The terminology used in this document is based on the [Java Functional Interfaces](https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html)
+**Completeness**: provide all possibly necessary conditions and operations to maximize the usefulness of the iterator.
 
 ### Credits
        
 Designed by Eduard Beutel and Grebiel Ifill.
 Another form of this pattern can be found at [https://github.com/ifillbrito/trees](https://github.com/ifillbrito/trees).
+
+## Java Implementation

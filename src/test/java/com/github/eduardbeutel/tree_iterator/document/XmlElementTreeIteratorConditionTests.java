@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class XmlElementTreeIteratorPredicateTests
+public class XmlElementTreeIteratorConditionTests
 {
 
     @Test
@@ -277,6 +277,33 @@ public class XmlElementTreeIteratorPredicateTests
 
         // then
         assertEquals(Arrays.asList("library", "book"), result);
+    }
+
+    @Test
+    public void and()
+    {
+        // given
+        Document document = XmlUtils.createDocument(
+                "<library>\n" +
+                        "    <book>\n" +
+                        "        <title />\n" +
+                        "        <author />\n" +
+                        "    </book>\n" +
+                        "</library>"
+        );
+        List<String> firstResult = new ArrayList<>();
+        List<String> secondResult = new ArrayList<>();
+
+        // when
+        XmlElementTreeIterator.of(document)
+                .whenLeaf().and().whenIdMatches(".*aut.*").then(e -> firstResult.add(e.getLocalName()))
+                .whenId("book").and().whenNot(e -> e.hasAttribute("id")).and().whenNotLeaf().then(e -> secondResult.add(e.getLocalName()))
+                .execute()
+        ;
+
+        // then
+        assertEquals(Arrays.asList("author"), firstResult);
+        assertEquals(Arrays.asList("book"), secondResult);
     }
 
 
