@@ -59,6 +59,10 @@ Arguments can be encapsulated in a **IterationStep** object.
 
 **Completeness**: provide all possibly necessary conditions and operations to maximize the usefulness of the iterator.
 
+### Implementation
+
+Java 8 : [treeiter4j-core](https://github.com/eduardbeutel/treeiter4j-core)
+
 ### Credits
 
 Designed by Eduard Beutel and Grebiel Ifill.
